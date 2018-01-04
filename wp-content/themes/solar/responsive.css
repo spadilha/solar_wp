@@ -1,0 +1,253 @@
+/*
+Author: Saulo Padilha
+Author URI: http://www.spadilha.com
+*/
+
+
+/*--------------------------------------------------------------------------------------------------
+										RESPONSIVE
+--------------------------------------------------------------------------------------------------*/
+
+/* ====================================================
+    ALTURA BAIXA
+==================================================== */
+@media only screen and (max-height: 800px ) {
+
+	.ico-155 {
+	    -webkit-transform: rotate(-159deg) translate(-43.4vw) rotate(159deg);
+	    -moz-transform: rotate(-159deg) translate(-43.4vw) rotate(159deg);
+	    -ms-transform: rotate(-159deg) translate(-43.4vw) rotate(159deg);
+	    -o-transform: rotate(-159deg) translate(-43.4vw) rotate(159deg);
+	    transform: rotate(-159deg) translate(-43.4vw) rotate(159deg);
+
+	}
+
+    .ico-25 {
+        -webkit-transform: rotate(-21deg) translate(-43.4vw) rotate(21deg);
+        -moz-transform: rotate(-21deg) translate(-43.4vw) rotate(21deg);
+        -ms-transform: rotate(-21deg) translate(-43.4vw) rotate(21deg);
+        -o-transform: rotate(-21deg) translate(-43.4vw) rotate(21deg);
+        transform: rotate(-21deg) translate(-43.4vw) rotate(21deg);
+    }
+
+}
+
+
+
+@media only screen and ( min-width: 1700px ) {
+
+    .boxContent .citacao p {font-size: 0.7vw;}
+    .alignnone {max-width: 600px; display: block; margin: 30px auto 15px;}
+
+}
+
+/* ====================================================
+    TABLET
+==================================================== */
+
+
+@media only screen and ( max-width: 1450px ) {
+
+
+    .icoBox p {font-size: 1vw;}
+
+    #mapWrapper, #mapFormWrapper {width: 30%;}
+
+}
+
+
+@media only screen and ( max-width: 1380px ) {
+    #mapWrapper, #mapFormWrapper {width: 32%;}
+
+    .envieProjeto {width: 260px; height: 130px; line-height: 120px;}
+    .envieProjeto span {font-size: 22px;}
+}
+
+
+@media only screen and ( max-width: 1280px ) {
+
+    .text-container p {font-size: 1.7vw;}
+
+}
+
+@media only screen and ( min-width: 780px ) {
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+::-webkit-scrollbar:vertical {
+    width: 5px;
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 11px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #e9a760;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #000;
+}
+
+}
+
+/* ====================================================
+    MOBILE
+==================================================== */
+@media only screen and ( max-width: 780px ) {
+
+    #path {display: none !important;}
+
+    .intro-logo {width: 70%;}
+
+    #video {width: 100%; height: 500%;}
+
+    .media {width: auto; height: 100%; }
+
+    .content-wrapper {min-height: inherit; min-width: inherit; position: absolute; top: 0; bottom: 0; left: 0; right: 0; display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .text-container {width: 100%; padding: 0 5%; text-align: center;}
+
+
+    .text-container p {font-weight: bold; font-size: 4vw; line-height: 1.6; margin: 2vw 0; color: #fff; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); text-transform:uppercase;}
+
+
+
+
+    /* =============================================================
+        MENU ICONS
+    ============================================================== */
+    .icoWrapper {width: 100%; float: left; clear: left; position: static; top: auto; left: auto; margin:0 0 1px 0;}
+    .icoWrapper .icon {display: none;}
+
+    .icohide {opacity: 1;
+        -webkit-transform: none !important;
+        transform: none !important;
+    }
+
+    .icoWrapper h3 {min-width: 0; width: 100%; height: 40px; line-height: 40px; display: block; font-size: 15px; font-weight: bold; text-transform: uppercase; color: #fff; background-color: #e9a760; padding-left: 5%; cursor: pointer; position: static; bottom: auto; text-shadow:none;}
+    .icoWrapper h3 br {display: none;}
+
+    .icoWrapper h3 span {display: inline;}
+
+    .icoLeft.icoWrapper h3, .icoRight.icoWrapper h3 {right:auto; text-align: left;}
+
+    .menu-bloco {display: flex; align-items: center; justify-content: center;}
+    .menuWrapper {width: 100%; height: auto; position:relative; left: auto; top: auto; z-index: 30;}
+
+
+    /* =============================================================================
+        ICONS BACKGROUND IMAGE
+    ============================================================================== */
+    .agua h3 {background: url('_images/ico_agua_potavel.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .salas h3 {background: url('_images/ico_escola.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .gelo h3 {background: url('_images/ico_gelo.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .contaluz h3 {background: url('_images/ico_economia_luz.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .emprego h3 {background: url('_images/ico_emprego_verde.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+
+    .conhecer h3 {background: url('_images/ico_conhecer.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .financiamento h3 {background: url('_images/ico_financiamento.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .tributos h3 {background: url('_images/ico_tributos.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+
+    .conhecimento h3 {background: url('_images/ico_moises.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .derrubaricm h3 {background: url('_images/ico_ricardo.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .creditosolar h3 {background: url('_images/ico_marcelo.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+    .maodeobra h3 {background: url('_images/ico_rutter.png') right 5% center no-repeat #e9a760; background-size: 30px auto}
+
+
+    /* =============================================================================
+        INFO BOX
+    ============================================================================= */
+    .icoBox {width: 100%; position: static; bottom: auto; left: auto; float: left; clear: left;}
+    .icoBox p {font-size: 4vw; line-height: 1.4; margin:15px 0; padding: 0 10%;}
+
+    .icoLeft .icoBox:before, .icoLeft.icoTop .icoBox:before, .icoRight .icoBox:before, .icoRight.icoTop .icoBox:before, .icoBox h4 {display: none;}
+
+
+    .inlineBtn {font-size: 3.7vw; background: url("_images/btn_play.svg") no-repeat scroll right 5% center; background-size:20px auto; padding: 5px 32px 5px 5px; margin: 15px -10px 20px 10%; line-height: 1.2;}
+
+    .playVideo {background-image: url('_images/btn_play.svg')}
+    .leiaMais {background-image: url('_images/btn_plus.svg')}
+
+    /* =============================================================
+        BOX CONTENT
+    ============================================================= */
+    .boxContent, #mapWrapper , #mapFormWrapper {width: 100%; padding: 50px 0 0 0;}
+    .boxContent h2 {font-size: 9vw; margin-bottom: 10px;}
+    .boxContent p {font-size: 4vw;}
+
+    .inner {padding:20px 5% 10px;}
+
+
+    /* GALERIA */
+    .galeriaWrapper {opacity: 1;}
+
+    .galeria {width: 100%; float: left; clear: left;}
+    .gal {width: 100%; float: left; clear: left; position: relative; margin-bottom: 5px;}
+    .gal img {width: 100%; height: auto; float: left; clear: left;}
+
+    .ampliar {display: none;}
+
+    .boxContent .gal_caption p {font-size: 3.5vw; line-height: 1.3;}
+
+
+    /* =============================================================================
+        CLOSE BUTTONS
+    ============================================================================= */
+    .btnClose {width: 30px; height: 30px; background-size:30px 30px; top: 55px; right: 4%; z-index: 10;}
+
+    .rightClose {right: 4%;}
+    .leftClose {left: auto;}
+
+    .mapClose, .mapFormClose {background-size: 30px 30px; right: 4%;}
+
+
+
+    /* =============================================================================
+        GOOGLE MAP
+    ============================================================================= */
+    #googlemaps {height: 90%; position: relative; z-index: 5;}
+
+    .mapaSun {display: none;}
+
+
+    .envieProjeto {width: 100%; height: 10%; line-height: 9vh; border-top:3px solid #f6b188; border-bottom:3px solid #f6b188; position: fixed; z-index: 15; left: 0; bottom: 0; top: auto; margin: 0; padding: 0; text-align:center;
+
+        -moz-transition: none;
+        -webkit-transition: none;
+        -o-transition: none;
+        transition: none;
+
+    }
+    .envieProjeto span {line-height: auto; font-size: 6vw; color: #666; background-size: 30px 30px; padding-left: 40px;}
+
+
+    /* ========================================================================================================
+        FOOTER
+    ======================================================================================================== */
+    #footer {bottom: auto; top: 0;}
+
+    .ftr_left, .ftr_right {width: auto; float: none;}
+
+    .ftr_left img {float: none; margin:0;}
+
+    .logoGreenpeace {width: 130px; height: auto; position: absolute; left: 10px; top: 16px;}
+
+    .menuIcon {position: absolute; right: 4%; top: 10px; margin: 0;}
+
+    #menu {left: auto; bottom: auto; right: 10px; top: 50px}
+
+    #btnSobre, .socialmedia, .junteseanos, #politicaPrivacidade, .mute-btn {display: none;}
+
+    #language {margin: 0 3% 0 0; padding-right: 60px;}
+
+
+
+}
