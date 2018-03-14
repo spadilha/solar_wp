@@ -162,13 +162,13 @@ jQuery(function($){
 
 			var intro = '<img src="'+ temp_dir +'_images/bgs/tela1.jpg" class="bgSlider media photo media-1" data-ratio="0.5625">';
 
-			var video1 = '<video loop="loop" poster="/_videos/abertura.jpg" data-ratio="0.5625" class="media video media-2"><source src="/_videos/SeqBloco1.mp4" type="video/mp4" /><source src="/_videos/SeqBloco1.webm" type="video/webm" /></video>';
+			var video1 = '<video loop="loop" poster="/_videos/abertura.jpg" data-ratio="0.5625" class="media video media-2"></video>';
 
-			var video2 = '<video loop="loop" poster="/_videos/raios.jpg" data-ratio="0.5625" class="media video media-4"><source src="/_videos/SeqBloco2.mp4" type="video/mp4" /><source src="/_videos/SeqBloco2.webm" type="video/webm" /></video>';
+			var video2 = '<video loop="loop" poster="/_videos/raios.jpg" data-ratio="0.5625" class="media video media-4"></video>';
 
-			var video3 = '<video loop="loop" poster="/_videos/abertura.jpg" data-ratio="0.5625" class="media video media-6"><source src="/_videos/SeqBloco3.mp4" type="video/mp4" /><source src="/_videos/SeqBloco3.webm" type="video/webm" /></video>';
+			var video3 = '<video loop="loop" poster="/_videos/abertura.jpg" data-ratio="0.5625" class="media video media-6"></video>';
 
-			var video4 = '<video loop="loop" poster="/_videos/abertura.jpg" data-ratio="0.5625" class="media video media-8"><source src="/_videos/SeqBloco4.mp4" type="video/mp4" /><source src="/_videos/SeqBloco4.webm" type="video/webm" /></video>';
+			var video4 = '<video loop="loop" poster="/_videos/abertura.jpg" data-ratio="0.5625" class="media video media-8"></video>';
 
 			var beneMedia = '<div class="bgSlider1 media photo media-3" data-ratio="0.5625"><div><img src="'+ temp_dir +'_images/bgs/bloco1_1.jpg"></div><div><img src="'+ temp_dir +'_images/bgs/bloco1_2.jpg"></div><div><img src="'+ temp_dir +'_images/bgs/bloco1_3.jpg"></div><div><img src="'+ temp_dir +'_images/bgs/bloco1_4.jpg"></div><div><img src="'+ temp_dir +'_images/bgs/bloco1_5.jpg"></div><div><img src="'+ temp_dir +'_images/bgs/bloco1_6.jpg"></div></div>';
 
@@ -424,13 +424,12 @@ jQuery(function($){
 						$targetMedia.addClass('shown');
 
 
-						if(isDesk){
-							_this.pauseVideos();
-							if($targetMedia.hasClass('video')){
-								$targetMedia.get(0).play();
-
-							}
-						}
+						// if(isDesk){
+						// 	_this.pauseVideos();
+						// 	if($targetMedia.hasClass('video')){
+						// 		$targetMedia.get(0).play();
+						// 	}
+						// }
 					}
 					currentMedia = targetMedia;
 				},
