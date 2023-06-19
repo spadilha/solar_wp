@@ -25,7 +25,8 @@ class WPML_Pre_Option_Page extends WPML_WPDB_And_SP_User {
 		if ( ( ( ! $cache_found || ! isset ( $results[ $type ] ) ) && ! $this->switched )
 		     || ( $this->switched && $this->sitepress->get_setting( 'setup_complete' ) )
 		) {
-			$results[ $type ] = array();
+			$results = [];
+			$results[ $type ] = [];
 			// Fetch for all languages and cache them.
 			$values = $this->wpdb->get_results(
 				$this->wpdb->prepare(
@@ -58,12 +59,16 @@ class WPML_Pre_Option_Page extends WPML_WPDB_And_SP_User {
 		return isset( $results[ $type ][ $target_language ] ) ? $results[ $type ][ $target_language ] : false;
 	}
 
-	public function clear_cache() {
+	public static function clear_cache() {
 		$cache = new WPML_WP_Cache( self::CACHE_GROUP );
 		$cache->flush_group_cache();
 	}
 
 	function fix_trashed_front_or_posts_page_settings( $post_id ) {
+		if ( 'page' !== get_post_type( $post_id ) ) {
+			return;
+		}
+		
 		$post_id = (int) $post_id;
 		$page_on_front_current  = (int) $this->get( 'page_on_front' );
 		$page_for_posts_current = (int) $this->get( 'page_for_posts' );

@@ -54,7 +54,7 @@ class WPML_Config_Update_Integrator {
 		if ( $action && $nonce && wp_verify_nonce( $nonce, $action ) ) {
 			if ( 'wpml_xml_update_clear' === $action ) {
 				$this->log->clear();
-				wp_safe_redirect( $this->log->get_log_url() );
+				wp_safe_redirect( $this->log->get_log_url(), 302, 'WPML' );
 			}
 			if ( 'wpml_xml_update_refresh' === $action ) {
 				$this->upgrader_process_complete_event();
@@ -64,17 +64,24 @@ class WPML_Config_Update_Integrator {
 
 	public function update_event() {
 		$this->get_worker()
-		     ->run();
+			 ->run();
 	}
 
 	public function upgrader_process_complete_event() {
 		$this->get_worker()
-		     ->run();
+			 ->run();
 	}
 
 	public function update_event_ajax() {
+		$nonce = isset( $_POST['_icl_nonce'] ) ? sanitize_text_field( $_POST['_icl_nonce'] ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'icl_theme_plugins_compatibility_nonce' ) ) {
+			wp_send_json_error( esc_html__( 'Invalid request!', 'sitepress' ), 400 );
+			return;
+		}
+
 		if ( $this->get_worker()
-		          ->run() ) {
+				  ->run() ) {
 			echo date( 'F j, Y H:i a', time() );
 		}
 

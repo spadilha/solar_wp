@@ -1,24 +1,14 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO
  */
 
 /**
- * Helps with creating shortlinks in the plugin
+ * Helps with creating shortlinks in the plugin.
  */
 class WPSEO_Shortlinker {
-
-	/**
-	 * @var string
-	 */
-	protected $version;
-
-	/**
-	 * @param string $version The version to put in the utm_content tag.
-	 */
-	public function __construct( $version ) {
-		$this->version = $version;
-	}
 
 	/**
 	 * Builds a URL to use in the plugin as shortlink.
@@ -28,7 +18,7 @@ class WPSEO_Shortlinker {
 	 * @return string The final URL.
 	 */
 	public function build_shortlink( $url ) {
-		return $url . '?utm_content=' . $this->version;
+		return YoastSEO()->helpers->short_link->build( $url );
 	}
 
 	/**
@@ -39,13 +29,7 @@ class WPSEO_Shortlinker {
 	 * @return string The final URL.
 	 */
 	public static function get( $url ) {
-		$version = WPSEO_VERSION;
-
-		$version = apply_filters( 'wpseo_shortlink_version', $version );
-
-		$shortlinker = new WPSEO_Shortlinker( $version );
-
-		return $shortlinker->build_shortlink( $url );
+		return YoastSEO()->helpers->short_link->get( $url );
 	}
 
 	/**
@@ -54,6 +38,15 @@ class WPSEO_Shortlinker {
 	 * @param string $url The URL to build upon.
 	 */
 	public static function show( $url ) {
-		echo esc_url( self::get( $url ) );
+		YoastSEO()->helpers->short_link->show( $url );
+	}
+
+	/**
+	 * Gets the shortlink's query params.
+	 *
+	 * @return array The shortlink's query params.
+	 */
+	public static function get_query_params() {
+		return YoastSEO()->helpers->short_link->get_query_params();
 	}
 }

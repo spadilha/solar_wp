@@ -15,11 +15,22 @@ if( function_exists('acf_add_options_page') )
     ));
 }
 
+/************* ACF - Google Maps API Key *********************/
+function my_acf_google_map_api( $api ){
+  $api['key'] = 'AIzaSyC2tQFQ0U-33XAaFVKzBUunpuj_q_ukPKE';
+  $api['language'] = 'pt-BR';
+  return $api;
+}
+add_filter('acf/fields/google_map/api', 'my_acf_google_map_api');
+
 /************* CALL CORE FUNCTIONS *********************/
 require_once('_functions/core.php');
 
 /************* SHORTCODES *********************/
 require_once('_functions/shortcodes.php');
+
+/************* AJAX GET *********************/
+require_once('_marcelo/getShit.php');
 
 
 /************* REMOVE POSTS FROM MENU ADMIN *********************/

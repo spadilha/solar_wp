@@ -1,19 +1,19 @@
 /*globals jQuery, icl_vars, wpml_xdomain_data */
 
 (function () {
-	"use strict";
+    "use strict";
 
-	jQuery(document).ready(function () {
-		jQuery('.' + wpml_xdomain_data.css_selector + ' a').on('click', function (event) {
+    jQuery(function () {
+        jQuery('.' + wpml_xdomain_data.css_selector + ' a').on('click', function (event) {
 
-			var originalUrl;
-			var currentUrl = window.location.href;
-			var targetUrl = jQuery(this).attr('href');
+            var originalUrl;
+            var currentUrl = window.location.href;
+            var targetUrl = jQuery(this).attr('href');
 
-			if ('#' !== targetUrl && currentUrl !== targetUrl) {
-				event.preventDefault();
+            if ('#' !== targetUrl && currentUrl !== targetUrl) {
+                event.preventDefault();
 
-				originalUrl = jQuery(this).attr('href');
+                originalUrl = jQuery(this).attr('href');
 				// Filter out xdomain_data if already in the url
 				originalUrl = originalUrl.replace(/&xdomain_data(=[^&]*)?(?=&|$)|xdomain_data(=[^&]*)?(&|$)/, '');
 				originalUrl = originalUrl.replace(/\?$/, '');
@@ -25,7 +25,8 @@
 					dataType: 'json',
 					data:     {
 						action:        'switching_language',
-						from_language: wpml_xdomain_data.current_language
+						from_language: wpml_xdomain_data.current_language,
+						_nonce:        wpml_xdomain_data._nonce,
 					},
 					success:  function (response) {
 						var argsGlue;

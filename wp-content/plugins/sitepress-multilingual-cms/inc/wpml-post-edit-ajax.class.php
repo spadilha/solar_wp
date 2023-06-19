@@ -1,5 +1,7 @@
 <?php
 
+use WPML\API\Sanitize;
+
 class WPML_Post_Edit_Ajax {
 	const AJAX_ACTION_SWITCH_POST_LANGUAGE = 'wpml_switch_post_language';
 
@@ -20,19 +22,35 @@ class WPML_Post_Edit_Ajax {
 			wp_send_json_error( 'Wrong Nonce' );
 		}
 
-		$lang        = filter_var( $_POST['term_language_code'], FILTER_SANITIZE_STRING );
-		$taxonomy    = filter_var( $_POST['taxonomy'], FILTER_SANITIZE_STRING );
-		$slug        = filter_var( $_POST['slug'], FILTER_SANITIZE_STRING );
-		$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
+		$lang        = Sanitize::stringProp( 'term_language_code', $_POST );
+		$taxonomy    = Sanitize::stringProp( 'taxonomy', $_POST );
+		$slug        = Sanitize::stringProp( 'slug', $_POST );
+		$name        = Sanitize::stringProp( 'name', $_POST );
+
 		$trid        = filter_var( $_POST['trid'], FILTER_SANITIZE_NUMBER_INT );
-		$description = filter_var( $_POST['description'], FILTER_SANITIZE_STRING );
+		$description = wp_kses_post( $_POST['description'] );
 		$meta_data   = isset( $_POST['meta_data'] ) ? $_POST['meta_data'] : array();
+
+		remove_filter( 'pre_term_description', 'wp_filter_kses' );
+		remove_filter( 'term_description', 'wp_kses_data' );
 
 		$new_term_object = self::save_term_ajax( $sitepress, $lang, $taxonomy, $slug, $name, $trid, $description, $meta_data );
 		$sitepress->get_wp_api()->wp_send_json_success( $new_term_object );
 
 	}
 
+	/**
+	 * @param \SitePress          $sitepress
+	 * @param string              $lang
+	 * @param string              $taxonomy
+	 * @param string              $slug
+	 * @param string              $name
+	 * @param int                 $trid
+	 * @param string              $description
+	 * @param array<string,mixed> $meta_data
+	 *
+	 * @return \WP_Term|false
+	 */
 	public static function save_term_ajax( $sitepress, $lang, $taxonomy, $slug, $name, $trid, $description, $meta_data ) {
 		$new_term_object = false;
 
@@ -54,18 +72,24 @@ class WPML_Post_Edit_Ajax {
 			}
 
 			$switch_lang = new WPML_Temporary_Switch_Language( $sitepress, $lang );
+			$is_new_term = ! term_exists( $name, $taxonomy );
 			$res = WPML_Terms_Translations::create_new_term( $args );
 			$switch_lang->restore_lang();
 
 			if ( $res && isset( $res[ 'term_taxonomy_id' ] ) ) {
 				/* res holds the term taxonomy id, we return the whole term objects to the ajax call */
 				$switch_lang = new WPML_Temporary_Switch_Language( $sitepress, $lang );
-				$new_term_object                = get_term_by( 'term_taxonomy_id', (int) $res[ 'term_taxonomy_id' ], $taxonomy );
+				/**
+				 * @var \WP_Term|\stdClass $new_term_object A few lines below, we are adding properties that WP_Term does not have.
+				 *                                          We should probably improve this code and use a specialized object instead.
+				 */
+				$new_term_object = get_term_by( 'term_taxonomy_id', (int) $res['term_taxonomy_id'], $taxonomy );
 				$switch_lang->restore_lang();
+
 				$lang_details                   = $sitepress->get_element_language_details( $new_term_object->term_taxonomy_id, 'tax_' . $new_term_object->taxonomy );
 				$new_term_object->trid          = $lang_details->trid;
 				$new_term_object->language_code = $lang_details->language_code;
-				if ( self::add_term_metadata( $res, $meta_data ) ) {
+				if ( self::add_term_metadata( $res, $meta_data, $is_new_term ) ) {
 					$new_term_object->meta_data = get_term_meta( $res['term_id'] );
 				}
 
@@ -108,7 +132,7 @@ class WPML_Post_Edit_Ajax {
 					} elseif ( $editor_key === 'excerpt' ) {
 						$editor_var = $excerpt_type;
 					}
-					
+
 					if ( function_exists( 'format_for_editor' ) ) {
 						// WordPress 4.3 uses format_for_editor
 						$html_pre = $post->$editor_field;
@@ -146,9 +170,9 @@ class WPML_Post_Edit_Ajax {
 	/**
 	 * Gets the content of a custom posts custom field , its excerpt as well as its title and returns it as an array
 	 *
-	 * @param  WP_post $post
+	 * @param \WP_Post $post
 	 *
-	 * @return array
+	 * @return array<string,string|array<string,string>>
 	 */
 	public static function copy_from_original_custom_fields( $post ) {
 
@@ -246,23 +270,51 @@ class WPML_Post_Edit_Ajax {
 
 	public static function wpml_get_default_lang() {
 		global $sitepress;
+		$nonce = isset( $_POST['_icl_nonce'] ) ? sanitize_text_field( $_POST['_icl_nonce'] ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'wpml_get_default_lang' ) ) {
+			wp_send_json_error( esc_html__( 'Invalid request!', 'sitepress' ), 400 );
+		}
+
 		wp_send_json_success( $sitepress->get_default_language() );
 	}
 
-	private static function add_term_metadata( $term, $meta_data ) {
+	/**
+	 * @param array $term
+	 * @param array $meta_data
+	 * @param bool  $is_new_term
+	 *
+	 * @return bool
+	 */
+	private static function add_term_metadata( $term, $meta_data, $is_new_term ) {
 		global $sitepress;
 
 		foreach ( $meta_data as $meta_key => $meta_value ) {
 			delete_term_meta( $term['term_id'], $meta_key );
-			$data = maybe_unserialize( stripslashes( $meta_value ) );
+			$data = self::safe_maybe_unserialize( stripslashes( $meta_value ) );
 			if ( ! add_term_meta( $term['term_id'], $meta_key, $data ) ) {
 				throw new RuntimeException( sprintf( 'Unable to add term meta form term: %d', $term['term_id'] ) );
 			}
 		}
 
-		$sync_meta_action = new WPML_Sync_Term_Meta_Action( $sitepress, $term[ 'term_taxonomy_id' ] );
+		$sync_meta_action = new WPML_Sync_Term_Meta_Action( $sitepress, $term[ 'term_taxonomy_id' ], $is_new_term );
 		$sync_meta_action->run();
 
 		return true;
 	}
+
+	/**
+	 * Safe unserialization for term metadata should not allow to unserialize classes.
+	 *
+	 * @param string $data
+	 * @return mixed
+	 */
+	private static function safe_maybe_unserialize( $data ) {
+		if ( is_serialized( $data ) ) { // Don't attempt to unserialize data that wasn't serialized going in.
+			return @unserialize( trim( $data ), [ 'allowed_classes' => false ] );
+		}
+
+		return $data;
+	}
+
 }

@@ -3,6 +3,7 @@
 /**
  * Use this class as parent class for translatable elements in WPML,
  * to have a common approach for retrieving and setting translation information.
+ *
  * @author OnTheGo Systems
  */
 abstract class WPML_Translation_Element extends WPML_SP_User {
@@ -27,7 +28,7 @@ abstract class WPML_Translation_Element extends WPML_SP_User {
 		if ( ! is_numeric( $id ) || $id <= 0 ) {
 			throw new InvalidArgumentException( 'Argument ID must be numeric and greater than 0.' );
 		}
-		$this->id = (int) $id;
+		$this->id         = (int) $id;
 		$this->wpml_cache = $wpml_cache ? $wpml_cache : new WPML_WP_Cache( WPML_ELEMENT_TRANSLATIONS_CACHE_GROUP );
 		parent::__construct( $sitepress );
 	}
@@ -36,6 +37,9 @@ abstract class WPML_Translation_Element extends WPML_SP_User {
 		return $this->id;
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function get_source_language_code() {
 		$source_language_code = null;
 		if ( $this->get_language_details() ) {
@@ -86,14 +90,14 @@ abstract class WPML_Translation_Element extends WPML_SP_User {
 	}
 
 	/**
-	 * @return array
+	 * @return WPML_Translation_Element[]
 	 */
 	public function get_translations() {
 		return $this->maybe_init_translations();
 	}
 
 	/**
-	 * @return array
+	 * @return WPML_Translation_Element[]
 	 */
 	public function maybe_init_translations() {
 		if ( ! $this->element_translations ) {
@@ -105,13 +109,19 @@ abstract class WPML_Translation_Element extends WPML_SP_User {
 					continue;
 				}
 
-				$this->element_translations[ $language_code ] = $this->get_new_instance( $element_data );
+				try {
+					$this->element_translations[ $language_code ] = $this->get_new_instance( $element_data );
+				} catch ( Exception $e ) {
+				}
 			}
 		}
 
 		return $this->element_translations;
 	}
 
+	/**
+	 * @return false|int
+	 */
 	public function get_trid() {
 		$trid = false;
 		if ( $this->get_language_details() ) {
@@ -170,6 +180,18 @@ abstract class WPML_Translation_Element extends WPML_SP_User {
 		return $source_element;
 	}
 
+	/**
+	 * Determines whether the current element language is the root source element.
+	 *
+	 * @return bool
+	 */
+	public function is_root_source()  {
+		return null !== $this->get_source_language_code() && $this->get_source_language_code() === $this->get_language_code();
+	}
+
+	/**
+	 * @return string|null
+	 */
 	public function get_language_code() {
 		$language_code = null;
 		if ( $this->get_language_details() ) {
@@ -191,8 +213,13 @@ abstract class WPML_Translation_Element extends WPML_SP_User {
 		$this->wpml_cache->flush_group_cache();
 	}
 
+	/** @return bool */
+	public function is_in_default_language() {
+		return $this->get_language_code() === $this->sitepress->get_default_language();
+	}
+
 	abstract function is_translatable();
 	abstract function is_display_as_translated();
 
 
-	}
+}

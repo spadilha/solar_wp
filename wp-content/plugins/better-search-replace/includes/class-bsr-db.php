@@ -106,9 +106,14 @@ class BSR_DB {
 	 * @return int
 	 */
 	public function get_pages_in_table( $table ) {
+		if ( false === $this->table_exists( $table ) ) {
+			return 0;
+		}
+
 		$table 	= esc_sql( $table );
-		$rows 	= $this->wpdb->get_var( "SELECT COUNT(*) FROM $table" );
+		$rows 	= $this->wpdb->get_var( "SELECT COUNT(*) FROM `$table`" );
 		$pages 	= ceil( $rows / $this->page_size );
+
 		return absint( $pages );
 	}
 
@@ -145,6 +150,11 @@ class BSR_DB {
 	public function get_columns( $table ) {
 		$primary_key 	= null;
 		$columns 		= array();
+
+		if ( false === $this->table_exists( $table ) ) {
+			return array( $primary_key, $columns );
+		}
+
 		$fields  		= $this->wpdb->get_results( 'DESCRIBE ' . $table );
 
 		if ( is_array( $fields ) ) {
@@ -207,7 +217,7 @@ class BSR_DB {
 		$end 			= $this->page_size;
 
 		// Grab the content of the table.
-		$data = $this->wpdb->get_results( "SELECT * FROM $table LIMIT $start, $end", ARRAY_A );
+		$data = $this->wpdb->get_results( "SELECT * FROM `$table` LIMIT $start, $end", ARRAY_A );
 
 		// Loop through the data.
 		foreach ( $data as $row ) {
@@ -251,7 +261,7 @@ class BSR_DB {
 						}
 					}
 
-					if ( '_transient_bsr_results' === $data_to_fix || 'bsr_profiles' === $data_to_fix || 'bsr_update_site_url' === $data_to_fix ) {
+					if ( '_transient_bsr_results' === $data_to_fix || 'bsr_profiles' === $data_to_fix || 'bsr_update_site_url' === $data_to_fix || 'bsr_data' === $data_to_fix ) {
 						$should_skip = true;
 					}
 
@@ -337,21 +347,23 @@ class BSR_DB {
 
 			// Submitted by Tina Matter
 			elseif ( is_object( $data ) ) {
-				// $data_class = get_class( $data );
-				$_tmp = $data; // new $data_class( );
-				$props = get_object_vars( $data );
-				foreach ( $props as $key => $value ) {
-					$_tmp->$key = $this->recursive_unserialize_replace( $from, $to, $value, false, $case_insensitive );
-				}
+				if ('__PHP_Incomplete_Class' !== get_class($data)) {
+					$_tmp = $data;
+					$props = get_object_vars( $data );
+					foreach ( $props as $key => $value ) {
+						$_tmp->$key = $this->recursive_unserialize_replace( $from, $to, $value, false, $case_insensitive );
+					}
 
-				$data = $_tmp;
-				unset( $_tmp );
+					$data = $_tmp;
+					unset( $_tmp );
+				}
 			}
 
 			elseif ( is_serialized_string( $data ) ) {
-				if ( $data = $this->unserialize( $data ) !== false ) {
-					$data = $this->str_replace( $from, $to, $data, $case_insensitive );
-					$data = serialize( $data );
+				$unserialized = $this->unserialize( $data );
+
+				if ( $unserialized !== false ) {
+					$data = $this->recursive_unserialize_replace( $from, $to, $unserialized, true, $case_insensitive );
 				}
 			}
 
@@ -446,4 +458,14 @@ class BSR_DB {
 		return $data;
 	}
 
+	/**
+	 * Checks whether a table exists in DB.
+	 *
+	 * @param $table
+	 *
+	 * @return bool
+	 */
+	private function table_exists( $table ) {
+		return in_array( $table, $this->get_tables() );
+	}
 }
